@@ -13,6 +13,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.io.IOException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 data class SearchUiState(
@@ -74,10 +77,16 @@ class SearchViewModel @Inject constructor(
                     hasSearched = true
                 )
             }.onFailure { exception ->
+                val errorMessage = when (exception) {
+                    is UnknownHostException -> "Aucune connexion Internet disponible. Veuillez vérifier votre connexion."
+                    is SocketTimeoutException -> "La requête a pris trop de temps. Vérifiez votre connexion."
+                    is IOException -> "Problème de connexion. Veuillez réessayer."
+                    else -> exception.message ?: "Erreur de recherche"
+                }
                 _uiState.value = _uiState.value.copy(
                     isSearching = false,
                     hasSearched = true,
-                    error = exception.message ?: "Erreur de recherche"
+                    error = errorMessage
                 )
             }
         } catch (e: TimeoutCancellationException) {

@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.io.IOException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 data class WeatherUiState(
@@ -115,9 +118,15 @@ class WeatherViewModel @Inject constructor(
                     )
                     fetchCurrentLocationWeather(location)
                 }.onFailure { exception ->
+                    val errorMessage = when (exception) {
+                        is UnknownHostException -> "Aucune connexion Internet disponible."
+                        is SocketTimeoutException -> "La requête a pris trop de temps. Vérifiez votre connexion."
+                        is IOException -> "Problème de connexion. Veuillez réessayer."
+                        else -> exception.message ?: "Erreur lors de la récupération de la position"
+                    }
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message ?: "Erreur lors de la récupération de la position"
+                        error = errorMessage
                     )
                 }
             } catch (e: TimeoutCancellationException) {
@@ -126,9 +135,15 @@ class WeatherViewModel @Inject constructor(
                     error = "Délai d'attente dépassé. Vérifiez votre connexion."
                 )
             } catch (e: Exception) {
+                val errorMessage = when (e) {
+                    is UnknownHostException -> "Aucune connexion Internet disponible."
+                    is SocketTimeoutException -> "La requête a pris trop de temps. Vérifiez votre connexion."
+                    is IOException -> "Problème de connexion. Veuillez réessayer."
+                    else -> e.message ?: "Erreur inconnue"
+                }
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = e.message ?: "Erreur inconnue"
+                    error = errorMessage
                 )
             }
         }
@@ -154,23 +169,37 @@ class WeatherViewModel @Inject constructor(
                         isRefreshing = false
                     )
                 }.onFailure { exception ->
+                    // Only show error if it's a user-initiated refresh and we don't have cached data
+                    val shouldShowError = forceRefresh || _uiState.value.currentLocationWeather == null
+
+                    val errorMessage = if (shouldShowError) {
+                        when (exception) {
+                            is UnknownHostException -> "Aucune connexion Internet disponible."
+                            is SocketTimeoutException -> "La requête a pris trop de temps. Vérifiez votre connexion."
+                            is IOException -> "Problème de connexion. Veuillez réessayer."
+                            else -> exception.message ?: "Erreur lors de la récupération de la météo"
+                        }
+                    } else null
+
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isRefreshing = false,
-                        error = exception.message ?: "Erreur lors de la récupération de la météo"
+                        error = errorMessage
                     )
                 }
             } catch (e: TimeoutCancellationException) {
+                val shouldShowError = forceRefresh || _uiState.value.currentLocationWeather == null
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isRefreshing = false,
-                    error = "Délai d'attente dépassé. Vérifiez votre connexion."
+                    error = if (shouldShowError) "Délai d'attente dépassé. Vérifiez votre connexion." else null
                 )
             } catch (e: Exception) {
+                val shouldShowError = forceRefresh || _uiState.value.currentLocationWeather == null
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isRefreshing = false,
-                    error = e.message ?: "Erreur inconnue"
+                    error = if (shouldShowError) e.message ?: "Erreur inconnue" else null
                 )
             }
         }
@@ -212,23 +241,37 @@ class WeatherViewModel @Inject constructor(
                         isRefreshing = false
                     )
                 }.onFailure { exception ->
+                    // Only show error if it's a user-initiated refresh and we don't have cached data
+                    val shouldShowError = forceRefresh || _uiState.value.selectedLocationWeather == null
+
+                    val errorMessage = if (shouldShowError) {
+                        when (exception) {
+                            is UnknownHostException -> "Aucune connexion Internet disponible."
+                            is SocketTimeoutException -> "La requête a pris trop de temps. Vérifiez votre connexion."
+                            is IOException -> "Problème de connexion. Veuillez réessayer."
+                            else -> exception.message ?: "Erreur lors de la récupération de la météo"
+                        }
+                    } else null
+
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isRefreshing = false,
-                        error = exception.message ?: "Erreur lors de la récupération de la météo"
+                        error = errorMessage
                     )
                 }
             } catch (e: TimeoutCancellationException) {
+                val shouldShowError = forceRefresh || _uiState.value.selectedLocationWeather == null
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isRefreshing = false,
-                    error = "Délai d'attente dépassé. Vérifiez votre connexion."
+                    error = if (shouldShowError) "Délai d'attente dépassé. Vérifiez votre connexion." else null
                 )
             } catch (e: Exception) {
+                val shouldShowError = forceRefresh || _uiState.value.selectedLocationWeather == null
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isRefreshing = false,
-                    error = e.message ?: "Erreur inconnue"
+                    error = if (shouldShowError) e.message ?: "Erreur inconnue" else null
                 )
             }
         }
