@@ -1,22 +1,25 @@
 package com.example.toobo2.data.remote.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class GeocodingResponse(
     val results: List<GeocodingResult>? = null,
-    @SerializedName("generationtime_ms")
+    @SerialName("generationtime_ms")
     val generationTimeMs: Double? = null
 )
 
+@Serializable
 data class GeocodingResult(
     val id: Long,
     val name: String,
     val latitude: Double,
     val longitude: Double,
     val elevation: Double? = null,
-    @SerializedName("feature_code")
+    @SerialName("feature_code")
     val featureCode: String? = null,
-    @SerializedName("country_code")
+    @SerialName("country_code")
     val countryCode: String? = null,
     val country: String? = null,
     val admin1: String? = null,

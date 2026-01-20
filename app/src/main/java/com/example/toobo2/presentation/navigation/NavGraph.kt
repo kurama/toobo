@@ -29,33 +29,31 @@ import com.example.toobo2.presentation.screens.HomeScreen
 import com.example.toobo2.presentation.screens.SearchScreen
 import com.example.toobo2.presentation.viewmodel.WeatherViewModel
 
-sealed class Screen(
+enum class Screen(
     val route: String,
     val label: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 ) {
-    data object Home : Screen(
+    Home(
         route = "home",
         label = "Accueil",
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home
-    )
-    data object Search : Screen(
+    ),
+    Search(
         route = "search",
         label = "Recherche",
         selectedIcon = Icons.Filled.Search,
         unselectedIcon = Icons.Outlined.Search
-    )
-    data object Favorites : Screen(
+    ),
+    Favorites(
         route = "favorites",
         label = "Favoris",
         selectedIcon = Icons.Filled.Bookmark,
         unselectedIcon = Icons.Outlined.Bookmark
     )
 }
-
-val bottomNavItems = listOf(Screen.Home, Screen.Search, Screen.Favorites)
 
 @Composable
 fun WeatherNavGraph(
@@ -69,7 +67,7 @@ fun WeatherNavGraph(
     Scaffold(
         bottomBar = {
             NavigationBar {
-                bottomNavItems.forEach { screen ->
+                Screen.entries.forEach { screen ->
                     val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
 
                     NavigationBarItem(

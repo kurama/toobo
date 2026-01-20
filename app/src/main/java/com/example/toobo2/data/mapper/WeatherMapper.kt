@@ -9,8 +9,8 @@ import com.example.toobo2.domain.model.Location
 import com.example.toobo2.domain.model.Weather
 import com.example.toobo2.domain.model.getWeatherDescription
 import com.example.toobo2.domain.model.getWeatherIcon
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -113,7 +113,6 @@ private fun mapDailyData(daily: com.example.toobo2.data.remote.dto.DailyWeather)
 }
 
 fun Weather.toCacheEntity(locationId: Long): WeatherCacheEntity {
-    val gson = Gson()
     return WeatherCacheEntity(
         locationId = locationId,
         temperature = current.temperature,
@@ -128,17 +127,13 @@ fun Weather.toCacheEntity(locationId: Long): WeatherCacheEntity {
         isDay = current.isDay,
         dailyMaxTemp = current.dailyMaxTemp,
         dailyMinTemp = current.dailyMinTemp,
-        hourlyDataJson = gson.toJson(hourly),
-        dailyDataJson = gson.toJson(daily),
+        hourlyDataJson = Json.encodeToString(hourly),
+        dailyDataJson = Json.encodeToString(daily),
         lastUpdated = lastUpdated
     )
 }
 
 fun WeatherCacheEntity.toWeather(location: Location): Weather {
-    val gson = Gson()
-    val hourlyType = object : TypeToken<List<HourlyWeatherData>>() {}.type
-    val dailyType = object : TypeToken<List<DailyWeatherData>>() {}.type
-
     return Weather(
         location = location,
         current = CurrentWeatherData(
@@ -157,8 +152,8 @@ fun WeatherCacheEntity.toWeather(location: Location): Weather {
             dailyMaxTemp = dailyMaxTemp,
             dailyMinTemp = dailyMinTemp
         ),
-        hourly = gson.fromJson(hourlyDataJson, hourlyType) ?: emptyList(),
-        daily = gson.fromJson(dailyDataJson, dailyType) ?: emptyList(),
+        hourly = Json.decodeFromString(hourlyDataJson),
+        daily = Json.decodeFromString(dailyDataJson),
         lastUpdated = lastUpdated
     )
 }

@@ -35,7 +35,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -60,8 +60,8 @@ fun SearchScreen(
     weatherViewModel: WeatherViewModel,
     searchViewModel: SearchViewModel = hiltViewModel()
 ) {
-    val weatherUiState by weatherViewModel.uiState.collectAsState()
-    val searchUiState by searchViewModel.uiState.collectAsState()
+    val weatherUiState by weatherViewModel.uiState.collectAsStateWithLifecycle()
+    val searchUiState by searchViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 

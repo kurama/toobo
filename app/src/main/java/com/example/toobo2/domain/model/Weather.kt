@@ -1,5 +1,7 @@
 package com.example.toobo2.domain.model
 
+import kotlinx.serialization.Serializable
+
 data class Weather(
     val location: Location,
     val current: CurrentWeatherData,
@@ -25,6 +27,7 @@ data class CurrentWeatherData(
     val dailyMinTemp: Double
 )
 
+@Serializable
 data class HourlyWeatherData(
     val time: String,
     val temperature: Double,
@@ -37,6 +40,7 @@ data class HourlyWeatherData(
     val isDay: Boolean
 )
 
+@Serializable
 data class DailyWeatherData(
     val date: String,
     val dayName: String,
@@ -53,6 +57,7 @@ data class DailyWeatherData(
     val windSpeedMax: Double
 )
 
+@Serializable
 enum class WeatherIcon {
     CLEAR_DAY,
     CLEAR_NIGHT,

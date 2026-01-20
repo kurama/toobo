@@ -1,96 +1,101 @@
 package com.example.toobo2.data.remote.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class WeatherResponse(
     val latitude: Double,
     val longitude: Double,
-    @SerializedName("generationtime_ms")
+    @SerialName("generationtime_ms")
     val generationTimeMs: Double,
-    @SerializedName("utc_offset_seconds")
+    @SerialName("utc_offset_seconds")
     val utcOffsetSeconds: Int,
     val timezone: String,
-    @SerializedName("timezone_abbreviation")
+    @SerialName("timezone_abbreviation")
     val timezoneAbbreviation: String,
     val elevation: Double,
-    @SerializedName("current")
+    @SerialName("current")
     val current: CurrentWeather? = null,
-    @SerializedName("hourly")
+    @SerialName("hourly")
     val hourly: HourlyWeather? = null,
-    @SerializedName("daily")
+    @SerialName("daily")
     val daily: DailyWeather? = null
 )
 
+@Serializable
 data class CurrentWeather(
     val time: String,
     val interval: Int,
-    @SerializedName("temperature_2m")
+    @SerialName("temperature_2m")
     val temperature: Double,
-    @SerializedName("relative_humidity_2m")
+    @SerialName("relative_humidity_2m")
     val relativeHumidity: Int,
-    @SerializedName("apparent_temperature")
+    @SerialName("apparent_temperature")
     val apparentTemperature: Double,
-    @SerializedName("is_day")
+    @SerialName("is_day")
     val isDay: Int,
     val precipitation: Double,
     val rain: Double,
     val showers: Double,
     val snowfall: Double,
-    @SerializedName("weather_code")
+    @SerialName("weather_code")
     val weatherCode: Int,
-    @SerializedName("cloud_cover")
+    @SerialName("cloud_cover")
     val cloudCover: Int,
-    @SerializedName("pressure_msl")
+    @SerialName("pressure_msl")
     val pressureMsl: Double,
-    @SerializedName("surface_pressure")
+    @SerialName("surface_pressure")
     val surfacePressure: Double,
-    @SerializedName("wind_speed_10m")
+    @SerialName("wind_speed_10m")
     val windSpeed: Double,
-    @SerializedName("wind_direction_10m")
+    @SerialName("wind_direction_10m")
     val windDirection: Int,
-    @SerializedName("wind_gusts_10m")
+    @SerialName("wind_gusts_10m")
     val windGusts: Double,
-    @SerializedName("uv_index")
+    @SerialName("uv_index")
     val uvIndex: Double? = null
 )
 
+@Serializable
 data class HourlyWeather(
     val time: List<String>,
-    @SerializedName("temperature_2m")
+    @SerialName("temperature_2m")
     val temperature: List<Double>,
-    @SerializedName("relative_humidity_2m")
+    @SerialName("relative_humidity_2m")
     val relativeHumidity: List<Int>,
-    @SerializedName("apparent_temperature")
+    @SerialName("apparent_temperature")
     val apparentTemperature: List<Double>,
     val precipitation: List<Double>,
-    @SerializedName("weather_code")
+    @SerialName("weather_code")
     val weatherCode: List<Int>,
-    @SerializedName("wind_speed_10m")
+    @SerialName("wind_speed_10m")
     val windSpeed: List<Double>,
-    @SerializedName("is_day")
+    @SerialName("is_day")
     val isDay: List<Int>
 )
 
+@Serializable
 data class DailyWeather(
     val time: List<String>,
-    @SerializedName("weather_code")
+    @SerialName("weather_code")
     val weatherCode: List<Int>,
-    @SerializedName("temperature_2m_max")
+    @SerialName("temperature_2m_max")
     val temperatureMax: List<Double>,
-    @SerializedName("temperature_2m_min")
+    @SerialName("temperature_2m_min")
     val temperatureMin: List<Double>,
-    @SerializedName("apparent_temperature_max")
+    @SerialName("apparent_temperature_max")
     val apparentTemperatureMax: List<Double>,
-    @SerializedName("apparent_temperature_min")
+    @SerialName("apparent_temperature_min")
     val apparentTemperatureMin: List<Double>,
     val sunrise: List<String>,
     val sunset: List<String>,
-    @SerializedName("uv_index_max")
+    @SerialName("uv_index_max")
     val uvIndexMax: List<Double>,
-    @SerializedName("precipitation_sum")
+    @SerialName("precipitation_sum")
     val precipitationSum: List<Double>,
-    @SerializedName("precipitation_probability_max")
+    @SerialName("precipitation_probability_max")
     val precipitationProbabilityMax: List<Int>? = null,
-    @SerializedName("wind_speed_10m_max")
+    @SerialName("wind_speed_10m_max")
     val windSpeedMax: List<Double>
 )
